@@ -126,10 +126,11 @@ size_t syslog_parser_execute(syslog_parser *parser, const char *buffer, size_t l
 
     const char *p, *pe, *eof;
     int cs = parser->cs;
+    int starting_length = parser->chars_read;
 
     p = buffer+off;
     pe = buffer+len;
-	eof = pe;
+    eof = pe;
 
     /** Start Exec **/
     %% write exec;
@@ -146,7 +147,7 @@ size_t syslog_parser_execute(syslog_parser *parser, const char *buffer, size_t l
 
     check(p <= pe, "Buffer overflow after parsing");
     parser->chars_read += p - (buffer + off);
-    check(parser->chars_read <= len, "Read more then length characters");
+    check((parser->chars_read - starting_length) <= len, "Read more then length characters");
     check(parser->mark <= len, "Mark is passed buffer end");
 
 
