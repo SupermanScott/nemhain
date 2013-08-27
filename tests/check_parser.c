@@ -49,6 +49,7 @@ START_TEST (test_parser_execute_fail)
 					      0);
     ck_assert_int_eq(read_chars, 4);
     ck_assert_int_eq(syslog_parser_has_error(p), 1);
+    ck_assert_int_eq(syslog_parser_is_finished(p), -1);
 }
 END_TEST
 
@@ -62,8 +63,10 @@ START_TEST (test_parser_execute_partial)
 					      7,
 					      0);
     ck_assert_int_eq(read_chars, 7);
+    ck_assert_int_eq(syslog_parser_is_finished(p), 0);
     read_chars = syslog_parser_execute(p, "  1 15:43:35 snack kernel: Kernel logging (proc) stopped.", 64-7, 0);
     ck_assert_int_eq(read_chars, 64);
+    ck_assert_int_eq(syslog_parser_is_finished(p), 1);
 }
 END_TEST
 

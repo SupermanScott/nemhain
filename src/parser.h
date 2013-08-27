@@ -60,3 +60,4 @@ char* syslog_parser_hostname(syslog_parser *parser);
 char* syslog_parser_month(syslog_parser *parser);
 char* syslog_parser_message(syslog_parser *parser);
 int syslog_parser_has_error(syslog_parser *parser);
+int syslog_parser_is_finished(syslog_parser *parser);

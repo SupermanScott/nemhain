@@ -98,6 +98,17 @@ int syslog_parser_has_error(syslog_parser *parser)
     return parser->cs == syslog_rfc3164_error;
 }
 
+int syslog_parser_is_finished(syslog_parser *parser)
+{
+    if (syslog_parser_has_error(parser)) {
+	return -1;
+    }
+    else if (parser->cs >= syslog_rfc3164_first_final) {
+	return 1;
+    }
+    return 0;
+}
+
 syslog_parser *syslog_parser_init()
 {
     int cs = 0;
@@ -156,5 +167,3 @@ size_t syslog_parser_execute(syslog_parser *parser, const char *buffer, size_t l
  error:
     return 0;
 }
-
-// example: "<12>Mar  1 15:43:35 snack kernel: Kernel logging (proc) stopped."
