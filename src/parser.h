@@ -41,14 +41,18 @@ typedef struct syslog_parser {
 
     int severity;
     int facility;
-    bstring month;
+    int year;
+    int month;
     int day;
     int hour;
     int minute;
     int second;
-    bstring hostname;
 
+    bstring hostname;
     bstring message;
+    bstring app_name;
+    bstring proc_id;
+    bstring msg_id;
 } syslog_parser;
 
 syslog_parser *syslog_parser_init();
@@ -56,8 +60,11 @@ syslog_parser *syslog_parser_init();
 size_t syslog_parser_execute(syslog_parser *parser, const char *data, size_t len, size_t off);
 /* int syslog_parser_has_error(syslog_parser *parser); */
 /* int syslog_parser_is_finished(syslog_parser *parser); */
-char* syslog_parser_hostname(syslog_parser *parser);
-char* syslog_parser_month(syslog_parser *parser);
-char* syslog_parser_message(syslog_parser *parser);
 int syslog_parser_has_error(syslog_parser *parser);
 int syslog_parser_is_finished(syslog_parser *parser);
+
+#define syslog_parser_hostname(parser) (bdata(parser->hostname))
+#define syslog_parser_message(parser) (bdata(parser->message))
+#define syslog_parser_app_name(parser) (bdata(parser->app_name))
+#define syslog_parser_proc_id(parser) (bdata(parser->proc_id))
+#define syslog_parser_msg_id(parser) (bdata(parser->msg_id))

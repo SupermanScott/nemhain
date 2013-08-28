@@ -40,21 +40,6 @@
 #define PTR_TO(F) (buffer + parser->F)
 #define TO_NUMBER(F, FPC) (parser->F = atoi(bstr2cstr(blk2bstr((buffer + parser->mark), (FPC - buffer - parser->mark)), (FPC - buffer - parser->mark))))
 
-char* syslog_parser_hostname(syslog_parser *parser)
-{
-    return bdata(parser->hostname);
-}
-
-char* syslog_parser_month(syslog_parser *parser)
-{
-    return bdata(parser->month);
-}
-
-char* syslog_parser_message(syslog_parser *parser)
-{
-    return bdata(parser->message);
-}
-
 %%{
   machine syslog_rfc3164;
 
@@ -62,29 +47,38 @@ char* syslog_parser_message(syslog_parser *parser)
 
   action severity_facility {pri_field = blk2bstr(PTR_TO(mark + 1), LEN(mark + 1, fpc - 3));}
 
+  date_fullyear = digit{4} >mark %{TO_NUMBER(year, fpc);};
+  date_month = digit{2} >mark %{TO_NUMBER(month, fpc);}  ; # 01-12
+  date_mday = digit{2} >mark %{TO_NUMBER(day, fpc);} ; # 01-28, 01-29, 01-30, 01-31 based on month/year
+  time_hour = digit{2} >mark %{TO_NUMBER(hour, fpc);}  ; #00-23
+  time_minute = digit{2} >mark %{TO_NUMBER(minute, fpc);} ; #00-59
+  time_second = digit{2} >mark %{TO_NUMBER(second, fpc);}; #00-58, 00-59, 00-60 based on leap second ruls
+  time_secfrac = "." digit+ ;
+  time_numoffset = ("+" | "-") time_hour ":" time_minute ;
+  time_offset = "Z" | time_numoffset ;
+
+  partial_time = time_hour ":" time_minute ":" time_second time_secfrac? ;
+
+  full_date = date_fullyear "-" date_month "-" date_mday ;
+  full_time = partial_time time_offset ;
+  date_time = full_date "T" full_time ;
+
+
   pri = ( "<" [0-9]{1,3} ">") >mark %severity_facility ;
-
-  month = ( "Jan" | "Feb" | "Mar" | "Apr" | "May" | "Jun"
-            | "Jul" | "Aug" | "Sep" | "Oct" | "Nov" | "Dec" ) >mark %{parser->month = blk2bstr(PTR_TO(mark), 3);};
-
-  day = ((" "? [1-9]) | ([12] [0-9]) | ("3" [01])) >mark %{TO_NUMBER(day, fpc);};
-
-  hour = (([01] [0-9]) | "2" [0-4]) >mark %{TO_NUMBER(hour, fpc);};
-
-  minute = ([0-5][0-9]) >mark %{TO_NUMBER(minute, fpc); };
-
-  second = ([0-5][0-9]) >mark %{TO_NUMBER(second, fpc); };
-
-
-  time = ( hour ":" minute ":" second ) ;
-  timestamp = ( month " " day " " time ) ;
 
   hostname = ([A-z0-9_.:]+) >mark %{parser->hostname = blk2bstr(PTR_TO(mark), LEN(mark, fpc)); };
 
-  header = timestamp " " hostname ;
-  message = (32..127)+ >mark %{parser->message = blk2bstr(PTR_TO(mark), LEN(mark, fpc));} ;
+  header = date_time " " hostname ;
 
-  payload = ( pri "1" " " header " " message ) ;
+  nil = '-' ;
+  app_name = alnum+ >mark %{parser->app_name = blk2bstr(PTR_TO(mark), LEN(mark, fpc)); };
+  proc_id = alnum+ >mark %{parser->proc_id = blk2bstr(PTR_TO(mark), LEN(mark, fpc)); };
+  msg_id = alnum+ >mark %{parser->msg_id = blk2bstr(PTR_TO(mark), LEN(mark, fpc)); } ;
+#structured_data = ???;
+
+  message = any+ >mark %{parser->message = blk2bstr(PTR_TO(mark), LEN(mark, fpc)); } ;
+
+  payload = ( pri "1" " " header " " (nil | app_name) " " (nil | proc_id) " " (nil | msg_id) " " (nil) " " message ) ;
 
   main := payload ;
 
@@ -120,6 +114,8 @@ syslog_parser *syslog_parser_init()
 	.mark = 0,
 	.severity = -1,
 	.facility = -1,
+	.month = -1,
+	.year = -1,
 	.day = 0,
 	.hour = -1,
 	.minute = -1,
@@ -147,6 +143,7 @@ size_t syslog_parser_execute(syslog_parser *parser, const char *buffer, size_t l
     %% write exec;
     /** End Exec **/
     parser->cs = cs;
+
     if (blength(pri_field)) {
 	debug("Parsed pri: %s", bdata(pri_field));
         int pri_value = atoi(bdata(pri_field));
