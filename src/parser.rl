@@ -62,7 +62,7 @@ char* syslog_parser_message(syslog_parser *parser)
 
   action severity_facility {pri_field = blk2bstr(PTR_TO(mark + 1), LEN(mark + 1, fpc - 3));}
 
-  pri = ( "<" [0-9]{1,3} ">" ) >mark %severity_facility ;
+  pri = ( "<" [0-9]{1,3} ">") >mark %severity_facility ;
 
   month = ( "Jan" | "Feb" | "Mar" | "Apr" | "May" | "Jun"
             | "Jul" | "Aug" | "Sep" | "Oct" | "Nov" | "Dec" ) >mark %{parser->month = blk2bstr(PTR_TO(mark), 3);};
@@ -84,7 +84,7 @@ char* syslog_parser_message(syslog_parser *parser)
   header = timestamp " " hostname ;
   message = (32..127)+ >mark %{parser->message = blk2bstr(PTR_TO(mark), LEN(mark, fpc));} ;
 
-  payload = ( pri header " " message ) ;
+  payload = ( pri "1" " " header " " message ) ;
 
   main := payload ;
 
@@ -146,9 +146,8 @@ size_t syslog_parser_execute(syslog_parser *parser, const char *buffer, size_t l
     /** Start Exec **/
     %% write exec;
     /** End Exec **/
-    debug("Parsed message. Final state is %d", cs);
     parser->cs = cs;
-    if (!syslog_parser_has_error(parser)) {
+    if (blength(pri_field)) {
 	debug("Parsed pri: %s", bdata(pri_field));
         int pri_value = atoi(bdata(pri_field));
         parser->severity = pri_value & 7;
