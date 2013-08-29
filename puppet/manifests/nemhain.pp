@@ -20,7 +20,7 @@ node default {
       ensure => installed;
     "ragel":
       ensure => installed;
-    "check":
+    "pkg-config":
       ensure => installed;
   }
 }

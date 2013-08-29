@@ -1,9 +1,5 @@
-lib_LTLIBRARIES = libsyslogparser.la
-libsyslogparser_la_SOURCES = parser.rl dbg.c bstr/bsafe.c bstr/bstraux.c bstr/bstrlib.c
-
 bin_PROGRAMS = main
-main_SOURCES = main.c
-main_LDADD = libsyslogparser.la
+main_SOURCES = main.c parser.rl dbg.c bstr/bsafe.c bstr/bstraux.c bstr/bstrlib.c
 
 AM_CFLAGS = -std=c1x
 
