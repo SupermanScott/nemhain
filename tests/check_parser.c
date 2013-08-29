@@ -1,5 +1,6 @@
 #include "../src/parser.h"
 #include "minunit/minunit.h"
+#include <string.h>
 
 MU_TEST(test_parser_execute_rfc_no_structured) {
     syslog_parser *p = syslog_parser_init();
@@ -18,15 +19,20 @@ MU_TEST(test_parser_execute_rfc_no_structured) {
     mu_assert_int_eq(p->hour, 22);
     mu_assert_int_eq(p->minute, 14);
     mu_assert_int_eq(p->second, 15);
-
     mu_assert_int_eq(p->severity, 2);
     mu_assert_int_eq(p->facility, 4);
 
-    /* mu_assert(syslog_parser_message(p) == "BOM'su root' failed for lonvick on /dev/pts/8", "Message not parsed properly"); */
-    /* mu_assert(syslog_parser_hostname(p) == "mymachine.example.com", "Host name doesn't match"); */
-    /* mu_assert(syslog_parser_app_name(p) == "su", "App name doesn't match"); */
+    mu_assert(strcmp(syslog_parser_message(p), "BOM'su root' failed for lonvick on /dev/pts/8") == 0,
+		  "Message not parsed properly");
+    mu_assert(strcmp(syslog_parser_hostname(p), "mymachine.example.com") == 0,
+		  "Host name doesn't match");
+    mu_assert(strcmp(syslog_parser_app_name(p), "su") == 0,
+	      "App name doesn't match");
+
     mu_assert(!syslog_parser_proc_id(p), "Proc id shouldn't be set");
-    //    mu_assert(syslog_parser_msg_id(p) == "ID47", "Failed to get the right msg_id");
+
+    mu_assert(strcmp(syslog_parser_msg_id(p), "ID47") == 0,
+	      "Failed to get the right msg_id");
 }
 MU_TEST_SUITE(test_suite) {
     MU_RUN_TEST(test_parser_execute_rfc_no_structured);
