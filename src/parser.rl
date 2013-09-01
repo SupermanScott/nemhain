@@ -57,28 +57,30 @@
   time_second = digit{2} >mark %{TO_NUMBER(second, fpc);}; #00-58, 00-59, 00-60 based on leap second ruls
   time_secfrac = ("." digit+) >mark %{TO_FLOAT(second_fraction, fpc);};
   time_numoffset = ("+" | "-") time_hour ":" time_minute ;
-  time_offset = "Z" | time_numoffset ;
+  time_offset = ("Z" | "z") | time_numoffset ;
 
   partial_time = time_hour ":" time_minute ":" time_second time_secfrac? ;
 
   full_date = date_fullyear "-" date_month "-" date_mday ;
   full_time = partial_time time_offset ;
-  date_time = full_date "T" full_time ;
+  date_time = full_date ("T" | "t") full_time ;
 
 
   pri = ( "<" [0-9]{1,3} ">") >mark %severity_facility ;
 
   hostname = ([A-z0-9_.:]+) >mark %{parser->hostname = blk2bstr(PTR_TO(mark), LEN(mark, fpc)); };
-
-  header = date_time " " hostname ;
-
   nil = '-' ;
+
+  header = (nil | date_time) " " (nil | hostname) ;
+
   app_name = alnum+ >mark %{parser->app_name = blk2bstr(PTR_TO(mark), LEN(mark, fpc)); };
   proc_id = alnum+ >mark %{parser->proc_id = blk2bstr(PTR_TO(mark), LEN(mark, fpc)); };
   msg_id = alnum+ >mark %{parser->msg_id = blk2bstr(PTR_TO(mark), LEN(mark, fpc)); } ;
 #structured_data = ???;
 
-  message = any+ >mark %{parser->message = blk2bstr(PTR_TO(mark), LEN(mark, fpc)); } ;
+  message_any = any+ >mark %{parser->message = blk2bstr(PTR_TO(mark), LEN(mark, fpc)); } ;
+  message_utf8 = "BOM" message_any ;
+  message = message_utf8 | message_any ;
 
   payload = ( pri "1" " " header " " (nil | app_name) " " (nil | proc_id) " " (nil | msg_id) " " (nil) " " message ) ;
 
