@@ -39,6 +39,8 @@
 #define MARK(M,FPC) (parser->M = (FPC) - buffer)
 #define PTR_TO(F) (buffer + parser->F)
 #define TO_NUMBER(F, FPC) (parser->F = atoi(bstr2cstr(blk2bstr((buffer + parser->mark), (FPC - buffer - parser->mark)), (FPC - buffer - parser->mark))))
+#define TO_FLOAT(F, FPC) (parser->F = atof(bstr2cstr(blk2bstr((buffer + parser->mark), (FPC - buffer - parser->mark)), (FPC - buffer - parser->mark))))
+
 
 %%{
   machine syslog_rfc3164;
@@ -53,7 +55,7 @@
   time_hour = digit{2} >mark %{TO_NUMBER(hour, fpc);}  ; #00-23
   time_minute = digit{2} >mark %{TO_NUMBER(minute, fpc);} ; #00-59
   time_second = digit{2} >mark %{TO_NUMBER(second, fpc);}; #00-58, 00-59, 00-60 based on leap second ruls
-  time_secfrac = "." digit+ ;
+  time_secfrac = ("." digit+) >mark %{TO_FLOAT(second_fraction, fpc);};
   time_numoffset = ("+" | "-") time_hour ":" time_minute ;
   time_offset = "Z" | time_numoffset ;
 

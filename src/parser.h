@@ -47,6 +47,7 @@ typedef struct syslog_parser {
     int hour;
     int minute;
     int second;
+    float second_fraction;
 
     bstring hostname;
     bstring message;

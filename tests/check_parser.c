@@ -21,6 +21,7 @@ MU_TEST(test_parser_execute_rfc_no_structured) {
     mu_assert_int_eq(p->second, 15);
     mu_assert_int_eq(p->severity, 2);
     mu_assert_int_eq(p->facility, 4);
+    mu_assert(p->second_fraction == 0.00300000003f, "Fraction isn't correct");
 
     mu_assert(strcmp(syslog_parser_message(p), "BOM'su root' failed for lonvick on /dev/pts/8") == 0,
 		  "Message not parsed properly");
