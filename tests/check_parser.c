@@ -50,9 +50,32 @@ MU_TEST(test_parser_execute_rfc_no_msg_id)
     mu_assert(strcmp(syslog_parser_proc_id(p), "8710") == 0,
 	      "Proc id wasn't parsed properly");
 }
+
+MU_TEST(test_parser_execute_missing_version)
+{
+    char *msg = "<165>2003-08-24T05:14:15.000003-07:00 192.0.2.1 PRC 8710 - - %% It's time to make the do-nuts.";
+
+    syslog_parser *p = syslog_parser_init();
+    syslog_parser_execute(p, msg, strlen(msg), 0);
+
+    mu_assert(syslog_parser_has_error(p), "Parser should have failed on this string");
+}
+
+MU_TEST(test_parser_execute_missing_pri_value)
+{
+    char *msg = "<1652003-08-24T05:14:15.000003-07:00 192.0.2.1 PRC 8710 - - %% It's time to make the do-nuts.";
+
+    syslog_parser *p = syslog_parser_init();
+    syslog_parser_execute(p, msg, strlen(msg), 0);
+
+    mu_assert(syslog_parser_has_error(p), "Parser should have failed on this string");
+}
+
 MU_TEST_SUITE(test_suite) {
     MU_RUN_TEST(test_parser_execute_rfc_no_structured);
     MU_RUN_TEST(test_parser_execute_rfc_no_msg_id);
+    MU_RUN_TEST(test_parser_execute_missing_version);
+    MU_RUN_TEST(test_parser_execute_missing_pri_value);
 }
 
 int main(int argc, char *argv[]) {
