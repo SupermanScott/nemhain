@@ -54,6 +54,7 @@ int server_attach_to_event_loop(server *server, struct ev_loop *loop)
     log_info("Starting UDP server on port: %d", server->port);
 
     // Setup a udp listening socket.
+    // @TODO: when doing tcp connections, change second param to be SOCK_STREAM
     server->socket_descriptor = socket(PF_INET, SOCK_DGRAM, 0);
     check(server->socket_descriptor >= 0, "Failed to create socket");
 
