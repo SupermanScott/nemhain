@@ -149,11 +149,9 @@ size_t syslog_parser_execute(syslog_parser *parser, const char *buffer, size_t l
     parser->cs = cs;
 
     if (blength(pri_field)) {
-	debug("Parsed pri: %s", bdata(pri_field));
         int pri_value = atoi(bdata(pri_field));
         parser->severity = pri_value & 7;
         parser->facility = pri_value >> 3;
-        debug("Parsed pri values: %d, %d", parser->severity, parser->facility);
     }
 
     check(p <= pe, "Buffer overflow after parsing");

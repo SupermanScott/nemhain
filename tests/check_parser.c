@@ -2,7 +2,8 @@
 #include "minunit/minunit.h"
 #include <string.h>
 
-MU_TEST(test_parser_execute_rfc_no_structured) {
+MU_TEST(test_parser_execute_rfc_no_structured)
+{
     syslog_parser *p = syslog_parser_init();
     size_t read_chars = syslog_parser_execute(
 					      p,
@@ -35,8 +36,23 @@ MU_TEST(test_parser_execute_rfc_no_structured) {
     mu_assert(strcmp(syslog_parser_msg_id(p), "ID47") == 0,
 	      "Failed to get the right msg_id");
 }
+
+MU_TEST(test_parser_execute_rfc_no_msg_id)
+{
+    char *msg = "<165>1 2003-08-24T05:14:15.000003-07:00 192.0.2.1 PRC 8710 - - %% It's time to make the do-nuts.";
+
+    syslog_parser *p = syslog_parser_init();
+    syslog_parser_execute(p, msg, strlen(msg), 0);
+
+    mu_assert(!syslog_parser_msg_id(p), "Message id shouldn't be set");
+    mu_assert(strcmp(syslog_parser_message(p), "%% It's time to make the do-nuts.") == 0,
+	       "Message not parsed properly");
+    mu_assert(strcmp(syslog_parser_proc_id(p), "8710") == 0,
+	      "Proc id wasn't parsed properly");
+}
 MU_TEST_SUITE(test_suite) {
     MU_RUN_TEST(test_parser_execute_rfc_no_structured);
+    MU_RUN_TEST(test_parser_execute_rfc_no_msg_id);
 }
 
 int main(int argc, char *argv[]) {
