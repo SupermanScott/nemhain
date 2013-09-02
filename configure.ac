@@ -7,4 +7,5 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile])
 AC_CHECK_LIB([rt], [clock_gettime])
 AC_CHECK_LIB([m], [fabs])
+AC_CHECK_LIB([ev], [ev_version_major])
 AC_OUTPUT

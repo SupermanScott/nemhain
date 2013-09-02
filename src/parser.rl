@@ -14,7 +14,7 @@
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
  *
- *     * Neither the name of the Mongrel2 Project, Zed A. Shaw, nor the names
+ *     * Neither the name of the Nehmain Project, Scott Reynolds, nor the names
  *       of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written
  *       permission.
@@ -40,6 +40,15 @@
 #define PTR_TO(F) (buffer + parser->F)
 #define TO_NUMBER(F, FPC) (parser->F = atoi(bstr2cstr(blk2bstr((buffer + parser->mark), (FPC - buffer - parser->mark)), (FPC - buffer - parser->mark))))
 #define TO_FLOAT(F, FPC) (parser->F = atof(bstr2cstr(blk2bstr((buffer + parser->mark), (FPC - buffer - parser->mark)), (FPC - buffer - parser->mark))))
+
+void syslog_parser_destroy(syslog_parser *parser)
+{
+    bdestroy(parser->hostname);
+    bdestroy(parser->message);
+    bdestroy(parser->app_name);
+    bdestroy(parser->proc_id);
+    bdestroy(parser->msg_id);
+}
 
 
 %%{

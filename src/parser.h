@@ -14,7 +14,7 @@
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
  *
- *     * Neither the name of the Mongrel2 Project, Zed A. Shaw, nor the names
+ *     * Neither the name of the Nehmain Project, Scott Reynolds, nor the names
  *       of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written
  *       permission.
@@ -57,12 +57,10 @@ typedef struct syslog_parser {
 } syslog_parser;
 
 syslog_parser *syslog_parser_init();
-/* int syslog_parser_finish (syslog_parser *parser); */
 size_t syslog_parser_execute(syslog_parser *parser, const char *data, size_t len, size_t off);
-/* int syslog_parser_has_error(syslog_parser *parser); */
-/* int syslog_parser_is_finished(syslog_parser *parser); */
 int syslog_parser_has_error(syslog_parser *parser);
 int syslog_parser_is_finished(syslog_parser *parser);
+void syslog_parser_destroy(syslog_parser *parser);
 
 #define syslog_parser_hostname(parser) (bdata(parser->hostname))
 #define syslog_parser_message(parser) (bdata(parser->message))

@@ -1,7 +1,7 @@
 bin_PROGRAMS = main
-main_SOURCES = main.c parser.rl dbg.c bstr/bsafe.c bstr/bstraux.c bstr/bstrlib.c
+main_SOURCES = main.c parser.rl dbg.c bstr/bsafe.c bstr/bstraux.c bstr/bstrlib.c server.c
 
-AM_CFLAGS = -std=c1x
+LDADD = $(DEPS_LIBS)
 
 SUFFIXES = .rl
 RAGEL = ragel

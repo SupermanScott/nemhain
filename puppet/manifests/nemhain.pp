@@ -22,5 +22,7 @@ node default {
       ensure => installed;
     "pkg-config":
       ensure => installed;
+    "libev4":
+      ensure => installed;
   }
 }
