@@ -49,7 +49,7 @@ server *server_init(int port, syslog_parser *p)
     return s;
 }
 
-void server_attach_to_event_loop(server *server, struct ev_loop *loop)
+int server_attach_to_event_loop(server *server, struct ev_loop *loop)
 {
     log_info("Starting UDP server on port: %d", server->port);
 
@@ -71,11 +71,11 @@ void server_attach_to_event_loop(server *server, struct ev_loop *loop)
     ev_io_init(&udp_watcher, server_udp_callback, server->socket_descriptor, EV_READ);
     ev_io_start(loop, &udp_watcher);
 
-    return;
+    return 0;
 
  error:
     // @TODO: server->address probably needs to be destroyed.
-    return;
+    return -1;
 }
 
 static void server_udp_callback(EV_P_ ev_io *w, int revents)

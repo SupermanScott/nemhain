@@ -50,4 +50,4 @@ typedef struct server {
 } server;
 
 server *server_init(int port, syslog_parser *p);
-void server_attach_to_event_loop(server *server, struct ev_loop *loop);
+int server_attach_to_event_loop(server *server, struct ev_loop *loop);
