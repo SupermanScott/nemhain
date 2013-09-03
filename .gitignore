@@ -26,4 +26,5 @@ src/.libs/
 src/libsyslogparser.la
 src/main
 src/parser
+src/send_msg
 src/parser.c
