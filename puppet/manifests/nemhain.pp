@@ -24,5 +24,7 @@ node default {
       ensure => installed;
     "libev4":
       ensure => installed;
+    "sendip":
+      ensure => installed;
   }
 }

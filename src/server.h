@@ -33,7 +33,6 @@
  */
 #pragma once
 #include "parser.h"
-#include <ev.h>
 #include <sys/socket.h>
 #include <resolv.h>
 #include <stdio.h>
@@ -50,4 +49,4 @@ typedef struct server {
 } server;
 
 server *server_init(int port, syslog_parser *p);
-int server_attach_to_event_loop(server *server, struct ev_loop *loop);
+int server_bind(server *server);

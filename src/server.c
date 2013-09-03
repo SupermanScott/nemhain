@@ -32,11 +32,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "server.h"
-#include <ev.h>
 #include "dbg.h"
 #include <netinet/in.h>
-
-static void server_udp_callback(EV_P_ ev_io *w, int revents);
 
 server *server_init(int port, syslog_parser *p)
 {
@@ -49,7 +46,7 @@ server *server_init(int port, syslog_parser *p)
     return s;
 }
 
-int server_attach_to_event_loop(server *server, struct ev_loop *loop)
+int server_bind(server *server)
 {
     log_info("Starting UDP server on port: %d", server->port);
 
@@ -68,18 +65,9 @@ int server_attach_to_event_loop(server *server, struct ev_loop *loop)
         log_err("Failed to bind: %d", sizeof(*server->address));
     }
 
-    ev_io udp_watcher;
-    ev_io_init(&udp_watcher, server_udp_callback, server->socket_descriptor, EV_READ);
-    ev_io_start(loop, &udp_watcher);
-
     return 0;
 
  error:
     // @TODO: server->address probably needs to be destroyed.
     return -1;
-}
-
-static void server_udp_callback(EV_P_ ev_io *w, int revents)
-{
-    log_info("something has awaken!");
 }
