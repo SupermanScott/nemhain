@@ -60,7 +60,7 @@ int server_bind(server *server)
     server->address->sin_port = htons(server->port);
     server->address->sin_addr.s_addr = htonl(INADDR_ANY);
     if (bind(server->socket_descriptor,
-	     server->address,
+	     (struct sockaddr *) server->address,
 	     sizeof(*server->address)) != 0) {
         log_err("Failed to bind: %d", sizeof(*server->address));
     }

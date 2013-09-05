@@ -56,7 +56,7 @@ void syslog_parser_destroy(syslog_parser *parser)
 
   action mark {MARK(mark, fpc);}
 
-  action severity_facility {pri_field = blk2bstr(PTR_TO(mark + 1), LEN(mark + 1, fpc - 3));}
+  action severity_facility {has_pri_field = 1; pri_field = blk2bstr(PTR_TO(mark + 1), LEN(mark + 1, fpc - 3));}
 
   date_fullyear = digit{4} >mark %{TO_NUMBER(year, fpc);};
   date_month = digit{2} >mark %{TO_NUMBER(month, fpc);}  ; # 01-12
@@ -147,6 +147,7 @@ size_t syslog_parser_execute(syslog_parser *parser, const char *buffer, size_t l
     const char *p, *pe, *eof;
     int cs = parser->cs;
     int starting_length = parser->chars_read;
+    int has_pri_field = 0;
 
     p = buffer+off;
     pe = buffer+len;
@@ -157,7 +158,7 @@ size_t syslog_parser_execute(syslog_parser *parser, const char *buffer, size_t l
     /** End Exec **/
     parser->cs = cs;
 
-    if (blength(pri_field)) {
+    if (has_pri_field && blength(pri_field)) {
         int pri_value = atoi(bdata(pri_field));
         parser->severity = pri_value & 7;
         parser->facility = pri_value >> 3;
