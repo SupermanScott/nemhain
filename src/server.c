@@ -35,12 +35,11 @@
 #include "dbg.h"
 #include <netinet/in.h>
 
-server *server_init(int port, syslog_parser *p)
+server *server_init(int port)
 {
     server *s = malloc(sizeof(server));
     *s = (server) {
 	.port = port,
-	.parser = p,
 	.socket_descriptor = 0
     };
     return s;

@@ -45,7 +45,12 @@ static void udp_callback(EV_P_ ev_io *w, int revents)
 
     server *server = hnode_get(node);
     log_info("Server found: %d", server->port);
-    syslog_parser_execute(server->parser, buffer, bytes_read, 0);
+    syslog_parser *parser = syslog_parser_init();
+    syslog_parser_execute(parser, buffer, bytes_read, 0);
+
+    check_debug(!syslog_parser_has_error(parser), "Parser has error!");
+    log_info("host name is %s", syslog_parser_hostname(parser));
+
  error:
     return;
 }
@@ -53,7 +58,7 @@ static void udp_callback(EV_P_ ev_io *w, int revents)
 int main ()
 {
     servers = hash_create(10, (hash_comp_t) compare_fds,(hash_fun_t) hash_fd);
-    server *server = server_init(1099, syslog_parser_init());
+    server *server = server_init(1099);
     debug("Server port is: %d", server->port);
     int bind_result = server_bind(server);
     check(bind_result == 0, "Failed to bind: %d", bind_result);

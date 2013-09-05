@@ -48,5 +48,5 @@ typedef struct server {
 
 } server;
 
-server *server_init(int port, syslog_parser *p);
+server *server_init(int port);
 int server_bind(server *server);
