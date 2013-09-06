@@ -2,6 +2,7 @@
 #include "server.h"
 #include "dbg.h"
 #include <ev.h>
+#include <netinet/in.h>
 
 #define UDP_BUF_LEN 2048
 
@@ -10,11 +11,15 @@ server *servers;
 
 static void udp_callback(EV_P_ ev_io *w, int revents)
 {
-    log_info("Called");
     char buffer[UDP_BUF_LEN];
     memset(buffer, 0, UDP_BUF_LEN);
 
-    int bytes_read = recv(w->fd, buffer, UDP_BUF_LEN - 1, 0);
+    socklen_t slen = sizeof(struct sockaddr_in);
+    struct sockaddr_in *input_addr = malloc(slen);
+
+    int bytes_read = recvfrom(w->fd, buffer, UDP_BUF_LEN - 1, 0,
+			      (struct sockaddr *) input_addr,
+			      &slen);
     check (bytes_read >= 0, "Failed to read bytes");
 
     server *server = NULL;
