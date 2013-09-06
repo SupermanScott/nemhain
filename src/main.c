@@ -36,6 +36,7 @@ static void udp_callback(EV_P_ ev_io *w, int revents)
 
     check_debug(!syslog_parser_has_error(parser), "Parser has error!");
     log_info("host name is %s", syslog_parser_hostname(parser));
+    log_info("message is %s", syslog_parser_message(parser));
 
  error:
     return;
