@@ -1,6 +1,7 @@
 #include "../src/parser.h"
 #include "minunit/minunit.h"
 #include <string.h>
+#include "../src/bstring.h"
 
 MU_TEST(test_parser_execute_rfc_no_structured)
 {
@@ -95,7 +96,30 @@ MU_TEST(test_parser_rfc3164)
     mu_assert(!syslog_parser_msg_id(p), "Msg id shouldn't be set");
 }
 
-MU_TEST_SUITE(test_suite) {
+MU_TEST(test_json_success)
+{
+    syslog_parser *p = syslog_parser_init();
+    p->severity = 1;
+    p->facility = 10;
+    p->year = 2013;
+    p->month = 9;
+    p->day = 7;
+    p->hour = 3;
+    p->minute = 49;
+    p->second = 12;
+    p->hostname = bfromcstr("precise64");
+    p->message = bfromcstr("Program started !");
+    p->app_name = bfromcstr("exampletest");
+
+    p->cs = 128;
+
+    char *out = syslog_parser_json_output(p);
+    mu_assert(out != NULL, "Output was expected");
+}
+
+
+MU_TEST_SUITE(parser_suite)
+{
     MU_RUN_TEST(test_parser_rfc3164);
     MU_RUN_TEST(test_parser_execute_rfc_no_structured);
     MU_RUN_TEST(test_parser_execute_rfc_no_msg_id);
@@ -103,8 +127,14 @@ MU_TEST_SUITE(test_suite) {
     MU_RUN_TEST(test_parser_execute_missing_pri_value);
 }
 
+MU_TEST_SUITE(json_suite)
+{
+    MU_RUN_TEST(test_json_success);
+}
+
 int main(int argc, char *argv[]) {
-    MU_RUN_SUITE(test_suite);
+    MU_RUN_SUITE(parser_suite);
+    MU_RUN_SUITE(json_suite);
     MU_REPORT();
     return 0;
 }

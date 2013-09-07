@@ -34,6 +34,7 @@
 #include "parser.h"
 #include <stdlib.h>
 #include "dbg.h"
+#include "cJSON/cJSON.h"
 
 #define LEN(AT, FPC) (FPC - buffer - parser->AT)
 #define MARK(M,FPC) (parser->M = (FPC) - buffer)
@@ -61,6 +62,27 @@ void syslog_parser_destroy(syslog_parser *parser)
     bdestroy(parser->app_name);
     bdestroy(parser->proc_id);
     bdestroy(parser->msg_id);
+}
+
+char* syslog_parser_json_output(syslog_parser *parser)
+{
+    check(syslog_parser_is_finished(parser) == 1, "Parser is not finished!");
+    cJSON *root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(root, "severity", parser->severity);
+    cJSON_AddNumberToObject(root, "facility", parser->facility);
+    cJSON_AddNumberToObject(root, "timestamp", 0);// @TODO!
+    /* cJSON_AddItemToObject(root, "hostname", */
+    /* 			  cJSON_CreateString(syslog_parser_hostname(parser))); */
+    /* cJSON_AddItemToObject(root, "app_name", */
+    /* 			  cJSON_CreateString(syslog_parser_app_name(parser))); */
+    /* cJSON_AddItemToObject(root, "proc_id", */
+    /* 			  cJSON_CreateString(syslog_parser_proc_id(parser))); */
+    /* cJSON_AddItemToObject(root, "msg_id", */
+    /* 			  cJSON_CreateString(syslog_parser_msg_id(parser))); */
+    return cJSON_Print(root);
+
+ error:
+    return NULL;
 }
 
 static inline int month_from_bstring(bstring month_data)

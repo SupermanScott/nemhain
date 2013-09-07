@@ -61,6 +61,7 @@ size_t syslog_parser_execute(syslog_parser *parser, const char *data, size_t len
 int syslog_parser_has_error(syslog_parser *parser);
 int syslog_parser_is_finished(syslog_parser *parser);
 void syslog_parser_destroy(syslog_parser *parser);
+char* syslog_parser_json_output(syslog_parser *parser);
 
 #define syslog_parser_hostname(parser) (bdata(parser->hostname))
 #define syslog_parser_message(parser) (bdata(parser->message))
