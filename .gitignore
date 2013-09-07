@@ -1,4 +1,5 @@
 Vagrantfile
+*TAGS
 .vagrant/*
 *.deps/*
 *.libs/*
