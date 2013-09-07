@@ -71,7 +71,31 @@ MU_TEST(test_parser_execute_missing_pri_value)
     mu_assert(syslog_parser_has_error(p), "Parser should have failed on this string");
 }
 
+MU_TEST(test_parser_rfc3164)
+{
+    char *msg = "<141>Sep  7 17:34:14 precise64 exampleprog[29258]: Program started by User 1000";
+    syslog_parser *p = syslog_parser_init();
+    syslog_parser_execute(p, msg, strlen(msg), 0);
+
+    mu_assert_int_eq(p->facility, 17);
+    mu_assert_int_eq(p->day, 7);
+    mu_assert_int_eq(p->hour, 17);
+    mu_assert_int_eq(p->minute, 34);
+    mu_assert_int_eq(p->second, 14);
+
+    mu_assert(strcmp(syslog_parser_hostname(p), "precise64") == 0,
+	      "Host name doesn't match");
+    mu_assert(strcmp(syslog_parser_app_name(p), "exampleprog") == 0,
+	      "App name doesn't match");
+    mu_assert(strcmp(syslog_parser_message(p), "Program started by User 1000") == 0,
+	      "Message doesn't match");
+
+    mu_assert(!syslog_parser_proc_id(p), "Proc id shouldn't be set");
+    mu_assert(!syslog_parser_msg_id(p), "Msg id shouldn't be set");
+}
+
 MU_TEST_SUITE(test_suite) {
+    MU_RUN_TEST(test_parser_rfc3164);
     MU_RUN_TEST(test_parser_execute_rfc_no_structured);
     MU_RUN_TEST(test_parser_execute_rfc_no_msg_id);
     MU_RUN_TEST(test_parser_execute_missing_version);

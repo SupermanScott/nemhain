@@ -59,12 +59,12 @@ void syslog_parser_destroy(syslog_parser *parser)
     action severity_facility {has_pri_field = 1; pri_field = blk2bstr(PTR_TO(mark + 1), LEN(mark + 1, fpc - 3));}
 
     date_fullyear = digit{4} >mark %{TO_NUMBER(year, fpc);};
-    date_month = digit{2} >mark %{TO_NUMBER(month, fpc);}  ; # 01-12
-								 date_mday = digit{2} >mark %{TO_NUMBER(day, fpc);} ; # 01-28, 01-29, 01-30, 01-31 based on month/year
-															  time_hour = digit{2} >mark %{TO_NUMBER(hour, fpc);}  ; #00-23
-																						     time_minute = digit{2} >mark %{TO_NUMBER(minute, fpc);} ; #00-59
-																														   time_second = digit{2} >mark %{TO_NUMBER(second, fpc);}; #00-58, 00-59, 00-60 based on leap second ruls
-																																						time_secfrac = ("." digit+) >mark %{TO_FLOAT(second_fraction, fpc);};
+    date_month = digit{2} >mark %{TO_NUMBER(month, fpc);}  ;
+    date_mday = digit{2} >mark %{TO_NUMBER(day, fpc);} ;
+    time_hour = digit{2} >mark %{TO_NUMBER(hour, fpc);}  ;
+    time_minute = digit{2} >mark %{TO_NUMBER(minute, fpc);} ;
+    time_second = digit{2} >mark %{TO_NUMBER(second, fpc);};
+    time_secfrac = ("." digit+) >mark %{TO_FLOAT(second_fraction, fpc);};
     time_numoffset = ("+" | "-") time_hour ":" time_minute ;
     time_offset = ("Z" | "z") | time_numoffset ;
 
@@ -75,7 +75,7 @@ void syslog_parser_destroy(syslog_parser *parser)
     date_time = full_date ("T" | "t") full_time ;
 
     rfc3164_month = "Jan" | "Feb" | "Mar" | "Apr" | "May" | "Jun" | "Jul" | "Aug" | "Sep" | "Oct" | "Nov" | "Dec";
-    rfc3164_day = (" "digit | digit{2});
+    rfc3164_day = (" "digit | digit{2}) >mark %{TO_NUMBER(day, fpc);} ;
     rfc3164_date_time = rfc3164_month " " rfc3164_day " " partial_time;
 
     pri = ( "<" [0-9]{1,3} ">") >mark %severity_facility ;
