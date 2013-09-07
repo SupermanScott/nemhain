@@ -78,6 +78,7 @@ MU_TEST(test_parser_rfc3164)
     syslog_parser_execute(p, msg, strlen(msg), 0);
 
     mu_assert_int_eq(p->facility, 17);
+    mu_assert_int_eq(p->month, 9);
     mu_assert_int_eq(p->day, 7);
     mu_assert_int_eq(p->hour, 17);
     mu_assert_int_eq(p->minute, 34);

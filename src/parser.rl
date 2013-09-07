@@ -41,6 +41,19 @@
 #define TO_NUMBER(F, FPC) (parser->F = atoi(bstr2cstr(blk2bstr((buffer + parser->mark), (FPC - buffer - parser->mark)), (FPC - buffer - parser->mark))))
 #define TO_FLOAT(F, FPC) (parser->F = atof(bstr2cstr(blk2bstr((buffer + parser->mark), (FPC - buffer - parser->mark)), (FPC - buffer - parser->mark))))
 
+struct tagbstring PARSER_JAN = bsStatic ("Jan");
+struct tagbstring PARSER_FEB = bsStatic ("Feb");
+struct tagbstring PARSER_MAR = bsStatic ("Mar");
+struct tagbstring PARSER_APR = bsStatic ("Apr");
+struct tagbstring PARSER_MAY = bsStatic ("May");
+struct tagbstring PARSER_JUN = bsStatic ("Jun");
+struct tagbstring PARSER_JUL = bsStatic ("Jul");
+struct tagbstring PARSER_AUG = bsStatic ("Aug");
+struct tagbstring PARSER_SEP = bsStatic ("Sep");
+struct tagbstring PARSER_OCT = bsStatic ("Oct");
+struct tagbstring PARSER_NOV = bsStatic ("Nov");
+struct tagbstring PARSER_DEC = bsStatic ("Dec");
+
 void syslog_parser_destroy(syslog_parser *parser)
 {
     bdestroy(parser->hostname);
@@ -48,6 +61,49 @@ void syslog_parser_destroy(syslog_parser *parser)
     bdestroy(parser->app_name);
     bdestroy(parser->proc_id);
     bdestroy(parser->msg_id);
+}
+
+static inline int month_from_bstring(bstring month_data)
+{
+    if (bstrcmp(month_data, &PARSER_JAN) == 0) {
+	return 1;
+    }
+    if (bstrcmp(month_data, &PARSER_FEB) == 0) {
+	return 2;
+    }
+    if (bstrcmp(month_data, &PARSER_MAR) == 0) {
+	return 3;
+    }
+    if (bstrcmp(month_data, &PARSER_APR) == 0) {
+	return 4;
+    }
+    if (bstrcmp(month_data, &PARSER_MAY) == 0) {
+	return 5;
+    }
+    if (bstrcmp(month_data, &PARSER_JUN) == 0) {
+	return 6;
+    }
+    if (bstrcmp(month_data, &PARSER_JUL) == 0) {
+	return 7;
+    }
+    if (bstrcmp(month_data, &PARSER_AUG) == 0) {
+	return 8;
+    }
+    if (bstrcmp(month_data, &PARSER_SEP) == 0) {
+	return 9;
+    }
+    if (bstrcmp(month_data, &PARSER_OCT) == 0) {
+	return 10;
+    }
+    if (bstrcmp(month_data, &PARSER_NOV) == 0) {
+	return 11;
+    }
+    if (bstrcmp(month_data, &PARSER_DEC) == 0) {
+	return 12;
+    }
+
+    // @TODO: this can't happen as the parser won't have worked.
+    return -1;
 }
 
 
@@ -58,6 +114,7 @@ void syslog_parser_destroy(syslog_parser *parser)
 
     action severity_facility {has_pri_field = 1; pri_field = blk2bstr(PTR_TO(mark + 1), LEN(mark + 1, fpc - 3));}
 
+    rfc3164_month = ("Jan" | "Feb" | "Mar" | "Apr" | "May" | "Jun" | "Jul" | "Aug" | "Sep" | "Oct" | "Nov" | "Dec") >mark %{month_data = blk2bstr(PTR_TO(mark), LEN(mark, fpc));};
     date_fullyear = digit{4} >mark %{TO_NUMBER(year, fpc);};
     date_month = digit{2} >mark %{TO_NUMBER(month, fpc);}  ;
     date_mday = digit{2} >mark %{TO_NUMBER(day, fpc);} ;
@@ -74,7 +131,6 @@ void syslog_parser_destroy(syslog_parser *parser)
     full_time = partial_time time_offset ;
     date_time = full_date ("T" | "t") full_time ;
 
-    rfc3164_month = "Jan" | "Feb" | "Mar" | "Apr" | "May" | "Jun" | "Jul" | "Aug" | "Sep" | "Oct" | "Nov" | "Dec";
     rfc3164_day = (" "digit | digit{2}) >mark %{TO_NUMBER(day, fpc);} ;
     rfc3164_date_time = rfc3164_month " " rfc3164_day " " partial_time;
 
@@ -146,7 +202,7 @@ size_t syslog_parser_execute(syslog_parser *parser, const char *buffer, size_t l
 {
     check(len != 0, "No length");
     check(off <= len, "Offset is past end of buffer");
-    bstring pri_field;
+    bstring pri_field, month_data = bfromcstr("");
 
     const char *p, *pe, *eof;
     int cs = parser->cs;
@@ -166,6 +222,9 @@ size_t syslog_parser_execute(syslog_parser *parser, const char *buffer, size_t l
         int pri_value = atoi(bdata(pri_field));
         parser->severity = pri_value & 7;
         parser->facility = pri_value >> 3;
+    }
+    if (blength(month_data) == 3) {
+	parser->month = month_from_bstring(month_data);
     }
 
     check(p <= pe, "Buffer overflow after parsing");
