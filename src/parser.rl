@@ -71,14 +71,14 @@ char* syslog_parser_json_output(syslog_parser *parser)
     cJSON_AddNumberToObject(root, "severity", parser->severity);
     cJSON_AddNumberToObject(root, "facility", parser->facility);
     cJSON_AddNumberToObject(root, "timestamp", 0);// @TODO!
-    /* cJSON_AddItemToObject(root, "hostname", */
-    /* 			  cJSON_CreateString(syslog_parser_hostname(parser))); */
-    /* cJSON_AddItemToObject(root, "app_name", */
-    /* 			  cJSON_CreateString(syslog_parser_app_name(parser))); */
-    /* cJSON_AddItemToObject(root, "proc_id", */
-    /* 			  cJSON_CreateString(syslog_parser_proc_id(parser))); */
-    /* cJSON_AddItemToObject(root, "msg_id", */
-    /* 			  cJSON_CreateString(syslog_parser_msg_id(parser))); */
+    cJSON_AddItemToObject(root, "hostname",
+			  cJSON_CreateString(syslog_parser_hostname(parser)));
+    cJSON_AddItemToObject(root, "app_name",
+			  cJSON_CreateString(syslog_parser_app_name(parser)));
+    cJSON_AddItemToObject(root, "proc_id",
+			  cJSON_CreateString(syslog_parser_proc_id(parser)));
+    cJSON_AddItemToObject(root, "msg_id",
+			  cJSON_CreateString(syslog_parser_msg_id(parser)));
     return cJSON_Print(root);
 
  error:
@@ -214,7 +214,12 @@ syslog_parser *syslog_parser_init()
 	.day = 0,
 	.hour = -1,
 	.minute = -1,
-	.second = -1
+	.second = -1,
+	.hostname = bfromcstr(""),
+	.message = bfromcstr(""),
+	.app_name = bfromcstr(""),
+	.proc_id = bfromcstr(""),
+	.msg_id = bfromcstr("")
     };
 
     return p;

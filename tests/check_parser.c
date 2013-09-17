@@ -32,7 +32,8 @@ MU_TEST(test_parser_execute_rfc_no_structured)
     mu_assert(strcmp(syslog_parser_app_name(p), "su") == 0,
 	      "App name doesn't match");
 
-    mu_assert(!syslog_parser_proc_id(p), "Proc id shouldn't be set");
+    mu_assert(strcmp(syslog_parser_proc_id(p), "") == 0,
+	      "Proc id shouldn't be set");
 
     mu_assert(strcmp(syslog_parser_msg_id(p), "ID47") == 0,
 	      "Failed to get the right msg_id");
@@ -45,7 +46,8 @@ MU_TEST(test_parser_execute_rfc_no_msg_id)
     syslog_parser *p = syslog_parser_init();
     syslog_parser_execute(p, msg, strlen(msg), 0);
 
-    mu_assert(!syslog_parser_msg_id(p), "Message id shouldn't be set");
+    mu_assert(strcmp(syslog_parser_msg_id(p), "") == 0,
+	      "Message id shouldn't be set");
     mu_assert(strcmp(syslog_parser_message(p), "%% It's time to make the do-nuts.") == 0,
 	       "Message not parsed properly");
     mu_assert(strcmp(syslog_parser_proc_id(p), "8710") == 0,
@@ -92,8 +94,10 @@ MU_TEST(test_parser_rfc3164)
     mu_assert(strcmp(syslog_parser_message(p), "Program started by User 1000") == 0,
 	      "Message doesn't match");
 
-    mu_assert(!syslog_parser_proc_id(p), "Proc id shouldn't be set");
-    mu_assert(!syslog_parser_msg_id(p), "Msg id shouldn't be set");
+    mu_assert(strcmp(syslog_parser_proc_id(p), "") == 0,
+	      "Proc id shouldn't be set");
+    mu_assert(strcmp(syslog_parser_msg_id(p), "") == 0,
+	      "Msg id shouldn't be set");
 }
 
 MU_TEST(test_json_success)
