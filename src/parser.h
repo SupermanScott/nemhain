@@ -34,13 +34,51 @@
 #pragma once
 #include "bstring.h"
 
+typedef enum {
+    KERN,
+    USER,
+    MAIL,
+    DAEMON,
+    AUTH,
+    SYSLOG,
+    LPR,
+    NEWS,
+    UUCP,
+    CLOCK,
+    AUTHPRIV,
+    FTP,
+    NTP,
+    AUDIT,
+    LOGALERT,
+    CRON,
+    LOCAL0,
+    LOCAL1,
+    LOCAL2,
+    LOCAL3,
+    LOCAL4,
+    LOCAL5,
+    LOCAL6,
+    LOCAL7
+} facility_t;
+
+typedef enum {
+    EMERG,
+    ALERT,
+    CRIT,
+    ERR,
+    WARN,
+    NOTICE,
+    INFO,
+    DEBUG
+} severity_t;
+
 typedef struct syslog_parser {
     int cs;
     size_t mark;
     size_t chars_read;
 
-    int severity;
-    int facility;
+    severity_t severity;
+    facility_t facility;
     int year;
     int month;
     int day;
@@ -61,6 +99,8 @@ size_t syslog_parser_execute(syslog_parser *parser, const char *data, size_t len
 int syslog_parser_has_error(syslog_parser *parser);
 int syslog_parser_is_finished(syslog_parser *parser);
 void syslog_parser_destroy(syslog_parser *parser);
+char* syslog_parser_severity_name(syslog_parser *parser);
+char *syslog_parser_facility_name(syslog_parser *parser);
 char* syslog_parser_json_output(syslog_parser *parser);
 
 #define syslog_parser_hostname(parser) (bdata(parser->hostname))

@@ -42,18 +42,156 @@
 #define TO_NUMBER(F, FPC) (parser->F = atoi(bstr2cstr(blk2bstr((buffer + parser->mark), (FPC - buffer - parser->mark)), (FPC - buffer - parser->mark))))
 #define TO_FLOAT(F, FPC) (parser->F = atof(bstr2cstr(blk2bstr((buffer + parser->mark), (FPC - buffer - parser->mark)), (FPC - buffer - parser->mark))))
 
-struct tagbstring PARSER_JAN = bsStatic ("Jan");
-struct tagbstring PARSER_FEB = bsStatic ("Feb");
-struct tagbstring PARSER_MAR = bsStatic ("Mar");
-struct tagbstring PARSER_APR = bsStatic ("Apr");
-struct tagbstring PARSER_MAY = bsStatic ("May");
-struct tagbstring PARSER_JUN = bsStatic ("Jun");
-struct tagbstring PARSER_JUL = bsStatic ("Jul");
-struct tagbstring PARSER_AUG = bsStatic ("Aug");
-struct tagbstring PARSER_SEP = bsStatic ("Sep");
-struct tagbstring PARSER_OCT = bsStatic ("Oct");
-struct tagbstring PARSER_NOV = bsStatic ("Nov");
-struct tagbstring PARSER_DEC = bsStatic ("Dec");
+struct tagbstring PARSER_JAN		= bsStatic ("Jan");
+struct tagbstring PARSER_FEB		= bsStatic ("Feb");
+struct tagbstring PARSER_MAR		= bsStatic ("Mar");
+struct tagbstring PARSER_APR		= bsStatic ("Apr");
+struct tagbstring PARSER_MAY		= bsStatic ("May");
+struct tagbstring PARSER_JUN		= bsStatic ("Jun");
+struct tagbstring PARSER_JUL		= bsStatic ("Jul");
+struct tagbstring PARSER_AUG		= bsStatic ("Aug");
+struct tagbstring PARSER_SEP		= bsStatic ("Sep");
+struct tagbstring PARSER_OCT		= bsStatic ("Oct");
+struct tagbstring PARSER_NOV		= bsStatic ("Nov");
+struct tagbstring PARSER_DEC		= bsStatic ("Dec");
+
+struct tagbstring SEVERITY_EMERG	= bsStatic ("EMERGENCY");
+struct tagbstring SEVERITY_ALERT	= bsStatic ("ALERT");
+struct tagbstring SEVERITY_CRIT		= bsStatic ("CRITICAL");
+struct tagbstring SEVERITY_ERR		= bsStatic ("ERROR");
+struct tagbstring SEVERITY_WARN		= bsStatic("WARNING");
+struct tagbstring SEVERITY_NOTICE	= bsStatic("NOTICE");
+struct tagbstring SEVERITY_INFO		= bsStatic ("INFORMATION");
+struct tagbstring SEVERITY_DEBUG	= bsStatic ("DEBUG");
+
+struct tagbstring FACILITY_KERN		= bsStatic("KERN");
+struct tagbstring FACILITY_USER		= bsStatic("USER");
+struct tagbstring FACILITY_MAIL		= bsStatic("MAIL");
+struct tagbstring FACILITY_DAEMON	= bsStatic("DAEMON");
+struct tagbstring FACILITY_AUTH		= bsStatic("AUTH");
+struct tagbstring FACILITY_SYSLOG	= bsStatic("SYSLOG");
+struct tagbstring FACILITY_LPR		= bsStatic("LPR");
+struct tagbstring FACILITY_NEWS		= bsStatic("NEWS");
+struct tagbstring FACILITY_UUCP		= bsStatic("UUCP");
+struct tagbstring FACILITY_CLOCK	= bsStatic("CLOCK"); // @TODO: yuck
+struct tagbstring FACILITY_AUTHPRIV	= bsStatic("AUTHPRIV");
+struct tagbstring FACILITY_FTP		= bsStatic("FTP");
+struct tagbstring FACILITY_NTP		= bsStatic("NTP");
+struct tagbstring FACILITY_AUDIT	= bsStatic("AUDIT");
+struct tagbstring FACILITY_LOGALERT	= bsStatic("LOGALERT");
+struct tagbstring FACILITY_CRON		= bsStatic("CRON");
+struct tagbstring FACILITY_LOCAL0	= bsStatic("LOCAL0");
+struct tagbstring FACILITY_LOCAL1	= bsStatic("LOCAL1");
+struct tagbstring FACILITY_LOCAL2	= bsStatic("LOCAL2");
+struct tagbstring FACILITY_LOCAL3	= bsStatic("LOCAL3");
+struct tagbstring FACILITY_LOCAL4	= bsStatic("LOCAL4");
+struct tagbstring FACILITY_LOCAL5	= bsStatic("LOCAL5");
+struct tagbstring FACILITY_LOCAL6	= bsStatic("LOCAL6");
+struct tagbstring FACILITY_LOCAL7	= bsStatic("LOCAL7");
+
+char* syslog_parser_facility_name(syslog_parser *parser)
+{
+    if (parser->facility == KERN) {
+	return bdata(&FACILITY_KERN);
+    }
+    if (parser->facility == USER) {
+	return bdata(&FACILITY_USER);
+    }
+    if (parser->facility == MAIL) {
+	return bdata(&FACILITY_MAIL);
+    }
+    if (parser->facility == DAEMON) {
+	return bdata(&FACILITY_DAEMON);
+    }
+    if (parser->facility == AUTH) {
+	return bdata(&FACILITY_AUTH);
+    }
+    if (parser->facility == SYSLOG) {
+	return bdata(&FACILITY_SYSLOG);
+    }
+    if (parser->facility == LPR) {
+	return bdata(&FACILITY_LPR);
+    }
+    if (parser->facility == NEWS) {
+	return bdata(&FACILITY_NEWS);
+    }
+    if (parser->facility == UUCP) {
+	return bdata(&FACILITY_UUCP);
+    }
+    if (parser->facility == CLOCK) {
+	return bdata(&FACILITY_CLOCK);
+    }
+    if (parser->facility == AUTHPRIV) {
+	return bdata(&FACILITY_AUTHPRIV);
+    }
+    if (parser->facility == FTP) {
+	return bdata(&FACILITY_FTP);
+    }
+    if (parser->facility == NTP) {
+	return bdata(&FACILITY_NTP);
+    }
+    if (parser->facility == AUDIT) {
+	return bdata(&FACILITY_AUDIT);
+    }
+    if (parser->facility == LOGALERT) {
+	return bdata(&FACILITY_LOGALERT);
+    }
+    if (parser->facility == CRON) {
+	return bdata(&FACILITY_CRON);
+    }
+    if (parser->facility == LOCAL0) {
+	return bdata(&FACILITY_LOCAL0);
+    }
+    if (parser->facility == LOCAL1) {
+	return bdata(&FACILITY_LOCAL1);
+    }
+    if (parser->facility == LOCAL2) {
+	return bdata(&FACILITY_LOCAL2);
+    }
+    if (parser->facility == LOCAL3) {
+	return bdata(&FACILITY_LOCAL3);
+    }
+    if (parser->facility == LOCAL4) {
+	return bdata(&FACILITY_LOCAL4);
+    }
+    if (parser->facility == LOCAL5) {
+	return bdata(&FACILITY_LOCAL5);
+    }
+    if (parser->facility == LOCAL6) {
+	return bdata(&FACILITY_LOCAL6);
+    }
+    if (parser->facility == LOCAL7) {
+	return bdata(&FACILITY_LOCAL7);
+    }
+}
+
+char* syslog_parser_severity_name(syslog_parser *parser)
+{
+    if (parser->severity == EMERG) {
+	return bdata(&SEVERITY_EMERG);
+    }
+    if (parser->severity == ALERT) {
+	return bdata(&SEVERITY_ALERT);
+    }
+    if (parser->severity == CRIT) {
+	return bdata(&SEVERITY_CRIT);
+    }
+    if (parser->severity == ERR) {
+	return bdata(&SEVERITY_ERR);
+    }
+    if (parser->severity == WARN) {
+	return bdata(&SEVERITY_WARN);
+    }
+    if (parser->severity == NOTICE) {
+	return bdata(&SEVERITY_NOTICE);
+    }
+    if (parser->severity == INFO) {
+	return bdata(&SEVERITY_INFO);
+    }
+    if (parser->severity == DEBUG) {
+	return bdata(&SEVERITY_DEBUG);
+    }
+}
 
 void syslog_parser_destroy(syslog_parser *parser)
 {
@@ -70,6 +208,10 @@ char* syslog_parser_json_output(syslog_parser *parser)
     cJSON *root = cJSON_CreateObject();
     cJSON_AddNumberToObject(root, "severity", parser->severity);
     cJSON_AddNumberToObject(root, "facility", parser->facility);
+    cJSON_AddItemToObject(root, "severity_name",
+			  cJSON_CreateString(syslog_parser_severity_name(parser)));
+    cJSON_AddItemToObject(root, "facility_name",
+			  cJSON_CreateString(syslog_parser_facility_name(parser)));
     cJSON_AddNumberToObject(root, "timestamp", 0);// @TODO!
     cJSON_AddItemToObject(root, "hostname",
 			  cJSON_CreateString(syslog_parser_hostname(parser)));
@@ -79,6 +221,8 @@ char* syslog_parser_json_output(syslog_parser *parser)
 			  cJSON_CreateString(syslog_parser_proc_id(parser)));
     cJSON_AddItemToObject(root, "msg_id",
 			  cJSON_CreateString(syslog_parser_msg_id(parser)));
+
+    debug("json is :%s", cJSON_Print(root));
     return cJSON_Print(root);
 
  error:
@@ -207,8 +351,8 @@ syslog_parser *syslog_parser_init()
 	.cs = cs,
 	.chars_read = 0,
 	.mark = 0,
-	.severity = -1,
-	.facility = -1,
+	.severity = DEBUG,
+	.facility = LOCAL7,
 	.month = -1,
 	.year = -1,
 	.day = 0,

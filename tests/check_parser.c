@@ -121,6 +121,46 @@ MU_TEST(test_json_success)
     mu_assert(out != NULL, "Output was expected");
 }
 
+MU_TEST(test_severity_name)
+{
+    syslog_parser *p = syslog_parser_init();
+    mu_assert(strcmp(syslog_parser_severity_name(p), "DEBUG") == 0,
+	      "Debug string name not properly handled");
+    p->severity = EMERG;
+    mu_assert(strcmp(syslog_parser_severity_name(p), "EMERGENCY") == 0,
+	      "Emergency string name not properly handled");
+    p->severity = ALERT;
+    mu_assert(strcmp(syslog_parser_severity_name(p), "ALERT") == 0,
+	      "Alert string name not properly handled");
+    p->severity = CRIT;
+    mu_assert(strcmp(syslog_parser_severity_name(p), "CRITICAL") == 0,
+	      "Critical string name not properly handled");
+    p->severity = ERR;
+    mu_assert(strcmp(syslog_parser_severity_name(p), "ERROR") == 0,
+	      "Error string name not properly handled");
+    p->severity = WARN;
+    mu_assert(strcmp(syslog_parser_severity_name(p), "WARNING") == 0,
+	      "Warning string name not properly handled");
+    p->severity = NOTICE;
+    mu_assert(strcmp(syslog_parser_severity_name(p), "NOTICE") == 0,
+	      "Notice string name not properly handled");
+    p->severity = INFO;
+    mu_assert(strcmp(syslog_parser_severity_name(p), "INFORMATION") == 0,
+	      "Info string name not properly handled");
+    p->severity = DEBUG;
+    mu_assert(strcmp(syslog_parser_severity_name(p), "DEBUG") == 0,
+	      "Debug string name not properly handled");
+}
+
+MU_TEST(test_facility_name)
+{
+    syslog_parser *p = syslog_parser_init();
+    mu_assert(strcmp(syslog_parser_facility_name(p), "LOCAL7") == 0,
+	      "LOCAL7 failed");
+    p->facility = KERN;
+    mu_assert(strcmp(syslog_parser_facility_name(p), "KERN") == 0,
+	      "KERN failed");
+}
 
 MU_TEST_SUITE(parser_suite)
 {
@@ -129,6 +169,8 @@ MU_TEST_SUITE(parser_suite)
     MU_RUN_TEST(test_parser_execute_rfc_no_msg_id);
     MU_RUN_TEST(test_parser_execute_missing_version);
     MU_RUN_TEST(test_parser_execute_missing_pri_value);
+    MU_RUN_TEST(test_severity_name);
+    MU_RUN_TEST(test_facility_name);
 }
 
 MU_TEST_SUITE(json_suite)
