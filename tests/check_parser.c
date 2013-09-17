@@ -1,4 +1,5 @@
 #include "../src/parser.h"
+#include "../src/cJSON/cJSON.h"
 #include "minunit/minunit.h"
 #include <string.h>
 #include "../src/bstring.h"
@@ -119,6 +120,17 @@ MU_TEST(test_json_success)
 
     char *out = syslog_parser_json_output(p);
     mu_assert(out != NULL, "Output was expected");
+
+    cJSON *response = NULL;
+    response = cJSON_Parse(out);
+    mu_assert(response != NULL, "Failed to parse");
+
+    mu_assert(cJSON_GetObjectItem(response, "severity")->valueint == 1,
+	      "Severity doesn't match 1");
+
+    cJSON *hostname_node = cJSON_GetObjectItem(response, "hostname");
+    mu_assert(strcmp(hostname_node->valuestring, "precise64") == 0,
+	      "Host name doesn't match");
 }
 
 MU_TEST(test_severity_name)

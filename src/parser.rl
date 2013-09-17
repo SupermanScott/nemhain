@@ -222,7 +222,6 @@ char* syslog_parser_json_output(syslog_parser *parser)
     cJSON_AddItemToObject(root, "msg_id",
 			  cJSON_CreateString(syslog_parser_msg_id(parser)));
 
-    debug("json is :%s", cJSON_Print(root));
     return cJSON_Print(root);
 
  error:
