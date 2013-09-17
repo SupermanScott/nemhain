@@ -28,6 +28,8 @@ node default {
       ensure => installed;
     "libev4":
       ensure => installed;
+    "libev-dev":
+      ensure => installed;
     "sendip":
       ensure => installed;
   }
