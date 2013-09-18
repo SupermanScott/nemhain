@@ -32,5 +32,7 @@ node default {
       ensure => installed;
     "sendip":
       ensure => installed;
+    "libzmq-dev":
+      ensure => installed;
   }
 }
