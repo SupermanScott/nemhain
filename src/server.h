@@ -41,7 +41,6 @@
 
 typedef struct server {
     int port;
-    syslog_parser *parser;
 
     int socket_descriptor;
     struct sockaddr_in *address;
