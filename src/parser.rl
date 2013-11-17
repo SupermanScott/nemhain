@@ -316,7 +316,7 @@ static inline int month_from_bstring(bstring month_data)
     message = message_utf8 | message_any ;
 
     rfc5424_payload = ( pri "1" " " header " " (nil | app_name) " " (nil | proc_id) " " (nil | msg_id) " " (nil) " " message ) ;
-    rfc3164_payload = (pri rfc3164_date_time " " (nil | hostname) " " (nil | app_name) ("[" digit+ "]" | " ") ":" " "? message) ;
+    rfc3164_payload = (pri rfc3164_date_time " " (nil | hostname) " " (nil | app_name) ("[" digit+ "]" | " " | "") ":" " "? message) ;
 
     main := rfc3164_payload | rfc5424_payload;
 

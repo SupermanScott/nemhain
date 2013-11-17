@@ -174,6 +174,18 @@ MU_TEST(test_facility_name)
 	      "KERN failed");
 }
 
+MU_TEST(test_rsyslog_messages)
+{
+    char *message = "<85>Nov 17 04:58:37 nemhain sudo:  vagrant : TTY=pts/1 ; PWD=/vagrant ; USER=root ; COMMAND=/usr/sbin/service rsyslog restart";
+    syslog_parser *p = syslog_parser_init();
+    syslog_parser_execute(p, message, strlen(message), 0);
+    mu_assert_int_eq(p->month, 11);
+    mu_assert(strcmp(syslog_parser_hostname(p), "nemhain") == 0,
+	      "Host name doesn't match");
+    mu_assert(strcmp(syslog_parser_app_name(p), "sudo") == 0,
+	      "Failed to parse the app_name");
+}
+
 MU_TEST_SUITE(parser_suite)
 {
     MU_RUN_TEST(test_parser_rfc3164);
@@ -183,6 +195,7 @@ MU_TEST_SUITE(parser_suite)
     MU_RUN_TEST(test_parser_execute_missing_pri_value);
     MU_RUN_TEST(test_severity_name);
     MU_RUN_TEST(test_facility_name);
+    MU_RUN_TEST(test_rsyslog_messages);
 }
 
 MU_TEST_SUITE(json_suite)
