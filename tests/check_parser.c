@@ -131,6 +131,10 @@ MU_TEST(test_json_success)
     cJSON *hostname_node = cJSON_GetObjectItem(response, "hostname");
     mu_assert(strcmp(hostname_node->valuestring, "precise64") == 0,
 	      "Host name doesn't match");
+
+    cJSON *message_node = cJSON_GetObjectItem(response, "message");
+    mu_assert(strcmp(message_node->valuestring, bdata(p->message)) == 0,
+	      "Message doesn't match");
 }
 
 MU_TEST(test_severity_name)

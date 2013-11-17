@@ -221,6 +221,8 @@ char* syslog_parser_json_output(syslog_parser *parser)
 			  cJSON_CreateString(syslog_parser_proc_id(parser)));
     cJSON_AddItemToObject(root, "msg_id",
 			  cJSON_CreateString(syslog_parser_msg_id(parser)));
+    cJSON_AddItemToObject(root, "message",
+			  cJSON_CreateString(syslog_parser_message(parser)));
 
     return cJSON_Print(root);
 
