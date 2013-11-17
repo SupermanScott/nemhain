@@ -424,6 +424,12 @@ char* syslog_parser_internal_message(severity_t severity, char *message)
     int minute = today->tm_min;
     int second = today->tm_sec;
 
+    // @TODO: cache this, probably a lil expensive
+    char hostname_char[1024];
+    hostname_char[1023] = '\0';
+    gethostname(hostname_char, 1023);
+    bstring hostname = bfromcstr(hostname_char);
+
     syslog_parser p = (syslog_parser) {
 	.cs = syslog_first_final,
 	.severity = severity,
@@ -436,8 +442,8 @@ char* syslog_parser_internal_message(severity_t severity, char *message)
 	.second = second,
 	.app_name = bfromcstr("nemhain"),
 	.message = bfromcstr(message),
+	.hostname = hostname,
 
-	.hostname = bfromcstr(""),
 	.proc_id = bfromcstr(""),
 	.msg_id = bfromcstr("")
     };
