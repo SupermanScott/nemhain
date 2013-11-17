@@ -22,6 +22,7 @@ ltmain.sh
 tests/check_parser
 tests/.deps/
 tests/.libs/
+tests/minunit/minunit_example
 src/.deps/
 src/.libs/
 src/libsyslogparser.la
