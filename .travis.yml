@@ -1,4 +1,4 @@
 language: c
 compiler: gcc
 install: autoreconf -f -i -Wall,no-obsolete
-before_install: sudo apt-get install libev-dev && ragel && libev4
+before_install: sudo apt-get install libev-dev ragel libev4
