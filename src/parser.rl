@@ -33,6 +33,7 @@
  */
 #include "parser.h"
 #include <stdlib.h>
+#include <time.h>
 #include "dbg.h"
 #include "cJSON/cJSON.h"
 
@@ -409,4 +410,36 @@ size_t syslog_parser_execute(syslog_parser *parser, const char *buffer, size_t l
 
  error:
     return 0;
+}
+
+char* syslog_parser_internal_message(severity_t severity, char *message)
+{
+    struct tm *today;
+    time_t now = time(NULL);
+    today = gmtime(&now);
+    int day = today->tm_mday;
+    int hour = today->tm_hour;
+    int year = today->tm_year + 1900;
+    int month = today->tm_mon + 1;
+    int minute = today->tm_min;
+    int second = today->tm_sec;
+
+    syslog_parser p = (syslog_parser) {
+	.cs = syslog_first_final,
+	.severity = severity,
+	.facility = SYSLOG,
+	.year = year,
+	.month = month,
+	.day = day,
+	.hour = hour,
+	.minute = minute,
+	.second = second,
+	.app_name = bfromcstr("nemhain"),
+	.message = bfromcstr(message),
+
+	.hostname = bfromcstr(""),
+	.proc_id = bfromcstr(""),
+	.msg_id = bfromcstr("")
+    };
+    return syslog_parser_json_output(&p);
 }

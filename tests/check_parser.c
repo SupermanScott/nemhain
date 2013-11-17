@@ -137,6 +137,22 @@ MU_TEST(test_json_success)
 	      "Message doesn't match");
 }
 
+MU_TEST(test_json_internal)
+{
+    char *out = syslog_parser_internal_message(ERR, "Failed issue");
+    mu_assert(out != NULL, "Output was expected");
+
+    cJSON *response = NULL;
+    response = cJSON_Parse(out);
+    mu_assert(response != NULL, "Failed to parse");
+
+    mu_assert(cJSON_GetObjectItem(response, "severity")->valueint == 3,
+	      "Severity doesn't match 3");
+    cJSON *message_node = cJSON_GetObjectItem(response, "message");
+    mu_assert(strcmp(message_node->valuestring, "Failed issue") == 0,
+	      "Message doesn't match");
+}
+
 MU_TEST(test_severity_name)
 {
     syslog_parser *p = syslog_parser_init();
@@ -223,6 +239,7 @@ MU_TEST_SUITE(parser_suite)
 MU_TEST_SUITE(json_suite)
 {
     MU_RUN_TEST(test_json_success);
+    MU_RUN_TEST(test_json_internal);
 }
 
 int main(int argc, char *argv[]) {

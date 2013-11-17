@@ -102,6 +102,7 @@ void syslog_parser_destroy(syslog_parser *parser);
 char* syslog_parser_severity_name(syslog_parser *parser);
 char *syslog_parser_facility_name(syslog_parser *parser);
 char* syslog_parser_json_output(syslog_parser *parser);
+char* syslog_parser_internal_message(severity_t severity, char *message);
 
 #define syslog_parser_hostname(parser) (bdata(parser->hostname))
 #define syslog_parser_message(parser) (bdata(parser->message))
