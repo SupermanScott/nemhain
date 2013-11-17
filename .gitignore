@@ -13,7 +13,6 @@ compile
 config.*
 depcomp
 configure
-install-sh
 libtool
 m4/
 missing
