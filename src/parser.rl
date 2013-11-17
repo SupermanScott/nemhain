@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "dbg.h"
+#include <unistd.h>
 #include "cJSON/cJSON.h"
 
 #define LEN(AT, FPC) (FPC - buffer - parser->AT)
