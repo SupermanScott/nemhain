@@ -174,16 +174,33 @@ MU_TEST(test_facility_name)
 	      "KERN failed");
 }
 
-MU_TEST(test_rsyslog_messages)
+MU_TEST(test_rsyslog_sudo)
 {
     char *message = "<85>Nov 17 04:58:37 nemhain sudo:  vagrant : TTY=pts/1 ; PWD=/vagrant ; USER=root ; COMMAND=/usr/sbin/service rsyslog restart";
     syslog_parser *p = syslog_parser_init();
     syslog_parser_execute(p, message, strlen(message), 0);
+    mu_assert_int_eq(syslog_parser_has_error(p), 0);
+    mu_assert_int_eq(syslog_parser_is_finished(p), 1);
     mu_assert_int_eq(p->month, 11);
     mu_assert(strcmp(syslog_parser_hostname(p), "nemhain") == 0,
 	      "Host name doesn't match");
     mu_assert(strcmp(syslog_parser_app_name(p), "sudo") == 0,
 	      "Failed to parse the app_name");
+}
+
+MU_TEST(test_rsyslog_pipe)
+{
+    char *message = "<43>Nov 17 05:10:33 nemhain rsyslogd-2039: Could not open output pipe '/dev/xconsole' [try http://www.rsyslog.com/e/2039 ]";
+    syslog_parser *p = syslog_parser_init();
+    syslog_parser_execute(p, message, strlen(message), 0);
+    mu_assert_int_eq(syslog_parser_has_error(p), 0);
+    mu_assert_int_eq(syslog_parser_is_finished(p), 1);
+    mu_assert_int_eq(p->month, 11);
+
+    mu_assert(strcmp(syslog_parser_hostname(p), "nemhain") == 0,
+	      "Host name doesn't match");
+    mu_assert(strcmp(syslog_parser_app_name(p), "rsyslogd-2039") == 0,
+	      "Application name isn't right");
 }
 
 MU_TEST_SUITE(parser_suite)

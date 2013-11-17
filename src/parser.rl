@@ -306,7 +306,7 @@ static inline int month_from_bstring(bstring month_data)
 
     header = (nil | date_time | rfc3164_date_time) " " (nil | hostname) ;
 
-    app_name = alnum+ >mark %{parser->app_name = blk2bstr(PTR_TO(mark), LEN(mark, fpc)); };
+    app_name = (alnum | "-" | "_")+ >mark %{parser->app_name = blk2bstr(PTR_TO(mark), LEN(mark, fpc)); };
     proc_id = alnum+ >mark %{parser->proc_id = blk2bstr(PTR_TO(mark), LEN(mark, fpc)); };
     msg_id = alnum+ >mark %{parser->msg_id = blk2bstr(PTR_TO(mark), LEN(mark, fpc)); } ;
 #structured_data = ???;
