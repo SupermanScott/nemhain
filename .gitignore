@@ -20,6 +20,7 @@ missing
 stamp-h1
 ltmain.sh
 tests/check_parser
+tests/check_json
 tests/.deps/
 tests/.libs/
 tests/minunit/minunit_example

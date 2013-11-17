@@ -236,15 +236,9 @@ MU_TEST_SUITE(parser_suite)
     MU_RUN_TEST(test_rsyslog_pipe);
 }
 
-MU_TEST_SUITE(json_suite)
-{
-    MU_RUN_TEST(test_json_success);
-    MU_RUN_TEST(test_json_internal);
-}
-
 int main(int argc, char *argv[]) {
+
     MU_RUN_SUITE(parser_suite);
-    MU_RUN_SUITE(json_suite);
     MU_REPORT();
     MU_RETURN_VALUE();
 }
