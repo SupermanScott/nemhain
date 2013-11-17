@@ -212,7 +212,7 @@ MU_TEST_SUITE(parser_suite)
     MU_RUN_TEST(test_parser_execute_missing_pri_value);
     MU_RUN_TEST(test_severity_name);
     MU_RUN_TEST(test_facility_name);
-    MU_RUN_TEST(test_rsyslog_messages);
+    MU_RUN_TEST(test_rsylog_sudo);
 }
 
 MU_TEST_SUITE(json_suite)
@@ -222,7 +222,6 @@ MU_TEST_SUITE(json_suite)
 
 int main(int argc, char *argv[]) {
     MU_RUN_SUITE(parser_suite);
-
     MU_RUN_SUITE(json_suite);
     MU_REPORT();
     return 0;
