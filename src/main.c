@@ -35,8 +35,7 @@ static void udp_callback(EV_P_ ev_io *w, int revents)
     syslog_parser_execute(parser, buffer, bytes_read, 0);
 
     check_debug(!syslog_parser_has_error(parser), "Parser has error! %s", buffer);
-    log_info("Json message is %s", syslog_parser_json_output(parser));
-
+    log_info("Message is %s", syslog_parser_message(parser));
  error:
     return;
 }
