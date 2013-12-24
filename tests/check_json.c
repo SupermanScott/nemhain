@@ -62,7 +62,7 @@ MU_TEST_SUITE(json_suite)
     MU_RUN_TEST(test_json_internal);
 }
 
-int main(int argc, char *argv[]) {
+int main() {
     MU_RUN_SUITE(json_suite);
     MU_REPORT();
     MU_RETURN_VALUE();

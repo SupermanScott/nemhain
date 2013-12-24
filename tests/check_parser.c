@@ -236,7 +236,7 @@ MU_TEST_SUITE(parser_suite)
     MU_RUN_TEST(test_rsyslog_pipe);
 }
 
-int main(int argc, char *argv[]) {
+int main() {
 
     MU_RUN_SUITE(parser_suite);
     MU_REPORT();
