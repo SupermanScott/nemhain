@@ -18,15 +18,15 @@ static void udp_callback(EV_P_ ev_io *w, int revents)
     struct sockaddr_in *input_addr = malloc(slen);
 
     int bytes_read = recvfrom(w->fd, buffer, UDP_BUF_LEN - 1, 0,
-			      (struct sockaddr *) input_addr,
-			      &slen);
+                              (struct sockaddr *) input_addr,
+                              &slen);
     check (bytes_read >= 0, "Failed to read bytes");
 
     server *server = NULL;
     for (int idx = 0; idx < server_count; idx++) {
-	if (servers[idx].socket_descriptor == w->fd) {
-	    server = &servers[idx];
-	}
+        if (servers[idx].socket_descriptor == w->fd) {
+            server = &servers[idx];
+        }
     }
     check(server != NULL, "Server not found for fd: %d", w->fd);
 
