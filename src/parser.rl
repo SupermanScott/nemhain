@@ -316,8 +316,8 @@ static inline int month_from_bstring(bstring month_data)
 #structured_data = ???;
 
     message_any = any+ >mark %{parser->message = blk2bstr(PTR_TO(mark), LEN(mark, fpc)); } ;
-    message_utf8 = "BOM" message_any ;
-    message = message_utf8 | message_any ;
+    bom = 0xEF 0xBB 0xBF %{parser->bom = true; } ;
+    message = bom message_any | message_any;
 
     rfc5424_payload = ( pri "1" " " header " " (nil | app_name) " " (nil | proc_id) " " (nil | msg_id) " " (nil) " " message ) ;
     rfc3164_payload = (pri rfc3164_date_time " " (nil | hostname) " " (nil | app_name) ("[" digit+ "]" | " " | "") ":" " "? message) ;
@@ -362,6 +362,7 @@ syslog_parser *syslog_parser_init()
 	.hour = -1,
 	.minute = -1,
 	.second = -1,
+        .bom = false,
 	.hostname = bfromcstr(""),
 	.message = bfromcstr(""),
 	.app_name = bfromcstr(""),

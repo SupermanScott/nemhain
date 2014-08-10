@@ -3,15 +3,26 @@
 #include "minunit/minunit.h"
 #include <string.h>
 #include "../src/bstring.h"
+#include <stdlib.h>
 
 MU_TEST(test_parser_execute_rfc_no_structured)
 {
     syslog_parser *p = syslog_parser_init();
+    char* non_message = "<34>1 2003-10-11T22:14:15.003Z mymachine.example.com su - ID47 - ";
+    char byte_order_mark[3] = {0xEF, 0xBB, 0xBF};
+    char* message = "'su root' failed for lonvick on /dev/pts/8";
+
+    // Equates to 114.
+    char* stream = malloc(65 + 3 + 42 + 1);
+    strcpy(stream, non_message);
+    strcat(stream, byte_order_mark);
+    strcat(stream, message);
+
     size_t read_chars = syslog_parser_execute(
-					      p,
-					      "<34>1 2003-10-11T22:14:15.003Z mymachine.example.com su - ID47 - BOM'su root' failed for lonvick on /dev/pts/8",
-					      113,
-					      0);
+                                              p,
+                                              stream,
+                                              113,
+                                              0);
 
     mu_assert_int_eq(syslog_parser_is_finished(p), 1);
 
@@ -26,8 +37,11 @@ MU_TEST(test_parser_execute_rfc_no_structured)
     mu_assert_int_eq(p->facility, 4);
     mu_assert(p->second_fraction == 0.00300000003f, "Fraction isn't correct");
 
-    mu_assert(strcmp(syslog_parser_message(p), "'su root' failed for lonvick on /dev/pts/8") == 0,
-		  "Message not parsed properly");
+    mu_assert(p->bom,
+              "Byte order mark not correctly parsed out");
+    mu_assert(strcmp(syslog_parser_message(p),
+                     message) == 0,
+              syslog_parser_message(p));
     mu_assert(strcmp(syslog_parser_hostname(p), "mymachine.example.com") == 0,
 		  "Host name doesn't match");
     mu_assert(strcmp(syslog_parser_app_name(p), "su") == 0,

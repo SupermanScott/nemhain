@@ -33,6 +33,7 @@
  */
 #pragma once
 #include "bstring.h"
+#include <stdbool.h>
 
 typedef enum {
     KERN,
@@ -86,6 +87,8 @@ typedef struct syslog_parser {
     int minute;
     int second;
     float second_fraction;
+
+    bool bom;
 
     bstring hostname;
     bstring message;
