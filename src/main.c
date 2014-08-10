@@ -30,12 +30,14 @@ static void udp_callback(EV_P_ ev_io *w, int revents)
     }
     check(server != NULL, "Server not found for fd: %d", w->fd);
 
-    log_info("Server found: %d", server->port);
+    debug("Server found: %d", server->port);
     syslog_parser *parser = syslog_parser_init();
     syslog_parser_execute(parser, buffer, bytes_read, 0);
 
-    check_debug(!syslog_parser_has_error(parser), "Parser has error! %s", buffer);
-    log_info("Message is %s", syslog_parser_message(parser));
+    check_debug(!syslog_parser_has_error(parser),
+                "Parser has error at %d! %s", parser->chars_read, buffer);
+    printf(syslog_parser_json_output(parser));
+    printf("\n");
  error:
     return;
 }
