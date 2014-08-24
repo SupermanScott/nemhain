@@ -91,7 +91,7 @@ struct tagbstring FACILITY_LOCAL5       = bsStatic("LOCAL5");
 struct tagbstring FACILITY_LOCAL6       = bsStatic("LOCAL6");
 struct tagbstring FACILITY_LOCAL7       = bsStatic("LOCAL7");
 
-char* syslog_parser_facility_name(syslog_parser *parser)
+char* syslog_parser_facility_name(const syslog_parser *parser)
 {
     if (parser->facility == KERN) {
         return bdata(&FACILITY_KERN);
@@ -167,7 +167,7 @@ char* syslog_parser_facility_name(syslog_parser *parser)
     }
 }
 
-char* syslog_parser_severity_name(syslog_parser *parser)
+char* syslog_parser_severity_name(const syslog_parser *parser)
 {
     if (parser->severity == EMERG) {
         return bdata(&SEVERITY_EMERG);
@@ -204,7 +204,7 @@ void syslog_parser_destroy(syslog_parser *parser)
     bdestroy(parser->msg_id);
 }
 
-char* syslog_parser_json_output(syslog_parser *parser)
+char* syslog_parser_json_output(const syslog_parser *parser)
 {
     check(syslog_parser_is_finished(parser) == 1, "Parser is not finished!");
     cJSON *root = cJSON_CreateObject();
@@ -232,7 +232,7 @@ char* syslog_parser_json_output(syslog_parser *parser)
     return NULL;
 }
 
-static inline int month_from_bstring(bstring month_data)
+static inline int month_from_bstring(const bstring month_data)
 {
     if (bstrcmp(month_data, &PARSER_JAN) == 0) {
         return 1;
@@ -329,12 +329,12 @@ static inline int month_from_bstring(bstring month_data)
 /** Data **/
 %% write data;
 /** End Data **/
-int syslog_parser_has_error(syslog_parser *parser)
+int syslog_parser_has_error(const syslog_parser *parser)
 {
     return parser->cs == syslog_error;
 }
 
-int syslog_parser_is_finished(syslog_parser *parser)
+int syslog_parser_is_finished(const syslog_parser *parser)
 {
     if (syslog_parser_has_error(parser)) {
         return -1;

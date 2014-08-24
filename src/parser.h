@@ -99,12 +99,12 @@ typedef struct syslog_parser {
 
 syslog_parser *syslog_parser_init();
 size_t syslog_parser_execute(syslog_parser *parser, const char *data, size_t len, size_t off);
-int syslog_parser_has_error(syslog_parser *parser);
-int syslog_parser_is_finished(syslog_parser *parser);
+int syslog_parser_has_error(const syslog_parser *parser);
+int syslog_parser_is_finished(const syslog_parser *parser);
 void syslog_parser_destroy(syslog_parser *parser);
-char* syslog_parser_severity_name(syslog_parser *parser);
-char *syslog_parser_facility_name(syslog_parser *parser);
-char* syslog_parser_json_output(syslog_parser *parser);
+char* syslog_parser_severity_name(const syslog_parser *parser);
+char *syslog_parser_facility_name(const syslog_parser *parser);
+char* syslog_parser_json_output(const syslog_parser *parser);
 char* syslog_parser_internal_message(severity_t severity, char *message);
 
 #define syslog_parser_hostname(parser) (bdata(parser->hostname))
